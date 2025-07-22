@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { AppService } from './app.service';
 import {
   MoviesPerActorResponse,
@@ -15,8 +15,8 @@ export class AppController {
    */
   @Get('/moviesPerActor')
   getMoviesPerActor(
-    @Query('page') page?: number,
-    @Query('pageSize') pageSize?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,
   ): Promise<MoviesPerActorResponse> {
     return this.appService.getMoviesPerActor(page, pageSize);
   }
@@ -26,8 +26,8 @@ export class AppController {
    */
   @Get('/actorsWithMultipleCharacters')
   getActorsWithMultipleCharacters(
-    @Query('page') page?: number,
-    @Query('pageSize') pageSize?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,
   ): Promise<ActorsWithMultipleCharactersResponse> {
     return this.appService.getActorsWithMultipleCharacters(page, pageSize);
   }
@@ -37,8 +37,8 @@ export class AppController {
    */
   @Get('/charactersWithMultipleActors')
   getCharactersWithMultipleActors(
-    @Query('page') page?: number,
-    @Query('pageSize') pageSize?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,
   ): Promise<CharactersWithMultipleActorsResponse> {
     return this.appService.getCharactersWithMultipleActors(page, pageSize);
   }
