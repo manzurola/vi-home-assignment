@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchActorsWithMultipleCharacters } from '../api';
+import { Box, Card, CardContent, Typography, List, ListItem, CircularProgress, Pagination, Stack } from '@mui/material';
 
 export default function ActorsWithMultipleCharacters() {
   const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
@@ -21,35 +22,38 @@ export default function ActorsWithMultipleCharacters() {
       });
   }, [page]);
 
-  if (loading) return <div>Loading actors...</div>;
-  if (error) return <div style={{color:'red'}}>Error: {error}</div>;
-  if (!data.items) return null;
-
   const totalPages = Math.ceil(data.totalCount / pageSize);
 
+  if (loading) return <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}><CircularProgress /></Box>;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
+  if (!data.items) return null;
+
   return (
-    <div>
-      <h2>Actors with Multiple Characters</h2>
-      <ul>
+    <Box>
+      <Typography variant="h5" gutterBottom>Actors with Multiple Characters</Typography>
+      <List>
         {Object.entries(data.items).map(([actor, roles]) => (
-          <li key={actor} style={{ marginBottom: '1rem' }}>
-            <strong>{actor}</strong>
-            <ul>
-              {roles.map((role, idx) => (
-                <li key={idx}>
-                  Movie: {role.movieName} | Character: {role.characterName}
-                  {/* Placeholder for movie/character details link */}
-                </li>
-              ))}
-            </ul>
-          </li>
+          <ListItem key={actor} disableGutters>
+            <Card sx={{ width: '100%', mb: 2 }}>
+              <CardContent>
+                <Typography variant="h6">{actor}</Typography>
+                <List>
+                  {roles.map((role, idx) => (
+                    <ListItem key={idx}>
+                      <Typography>
+                        Movie: <b>{role.movieName}</b> | Character: <b>{role.characterName}</b>
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </ListItem>
         ))}
-      </ul>
-      <div style={{ marginTop: 10 }}>
-        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>Prev</button>
-        <span style={{ margin: '0 8px' }}>Page {page} of {totalPages}</span>
-        <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next</button>
-      </div>
-    </div>
+      </List>
+      <Box display="flex" justifyContent="center" mt={2}>
+        <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" />
+      </Box>
+    </Box>
   );
 } 

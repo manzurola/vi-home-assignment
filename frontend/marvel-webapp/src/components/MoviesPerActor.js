@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchMoviesPerActor } from '../api';
+import { Box, Card, CardContent, Typography, List, ListItem, Button, CircularProgress, Pagination, Stack } from '@mui/material';
 
 export default function MoviesPerActor() {
   const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
@@ -30,49 +31,51 @@ export default function MoviesPerActor() {
     setMovies(data.items[actor] || []);
   };
 
-  if (loading) return <div>Loading actors...</div>;
-  if (error) return <div style={{color:'red'}}>Error: {error}</div>;
-  if (!data.items) return null;
-
   const actors = Object.keys(data.items);
   const totalPages = Math.ceil(data.totalCount / pageSize);
 
+  if (loading) return <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}><CircularProgress /></Box>;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
+  if (!data.items) return null;
+
   return (
-    <div>
-      <h2>Movies Per Actor</h2>
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        <div>
-          <h3>Actors</h3>
-          <ul style={{ maxHeight: 300, overflowY: 'auto', minWidth: 200 }}>
+    <Box>
+      <Typography variant="h5" gutterBottom>Movies Per Actor</Typography>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={4}>
+        <Box minWidth={220}>
+          <Typography variant="subtitle1">Actors</Typography>
+          <List sx={{ maxHeight: 300, overflowY: 'auto', bgcolor: '#f0f0f0', borderRadius: 1 }}>
             {actors.map((actor) => (
-              <li key={actor}>
-                <button onClick={() => handleActorSelect(actor)} style={{ background: actor === selectedActor ? '#eee' : 'white' }}>
+              <ListItem key={actor} disablePadding>
+                <Button fullWidth variant={actor === selectedActor ? 'contained' : 'text'} onClick={() => handleActorSelect(actor)} sx={{ justifyContent: 'flex-start' }}>
                   {actor}
-                </button>
-              </li>
+                </Button>
+              </ListItem>
             ))}
-          </ul>
-          <div style={{ marginTop: 10 }}>
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>Prev</button>
-            <span style={{ margin: '0 8px' }}>Page {page} of {totalPages}</span>
-            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next</button>
-          </div>
-        </div>
-        <div>
-          <h3>Movies</h3>
+          </List>
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Pagination count={totalPages} page={page} onChange={(_, value) => setPage(value)} color="primary" />
+          </Box>
+        </Box>
+        <Box flex={1}>
+          <Typography variant="subtitle1">Movies</Typography>
           {selectedActor ? (
-            <ul>
+            <List>
               {movies.map((movie) => (
-                <li key={movie.id}>
-                  {movie.title} {/* Placeholder for details link */}
-                </li>
+                <ListItem key={movie.id}>
+                  <Card sx={{ width: '100%' }}>
+                    <CardContent>
+                      <Typography>{movie.title}</Typography>
+                    </CardContent>
+                  </Card>
+                </ListItem>
               ))}
-            </ul>
+            </List>
           ) : (
-            <div>Select an actor to see their movies.</div>
+            <Typography color="text.secondary">Select an actor to see their movies.</Typography>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Stack>
+    </Box>
   );
 } 
