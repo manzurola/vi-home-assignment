@@ -1,10 +1,25 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { MovieExplorerModule } from './movie-explorer/movie-explorer.module';
+import { DataScraperModule } from './data-scraper/data-scraper.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import databaseConfig from './config/database.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      load: [databaseConfig],
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        configService.get('database')!,
+      inject: [ConfigService],
+    }),
+    DataScraperModule,
+    MovieExplorerModule,
+    DataScraperModule,
+  ],
 })
 export class AppModule {}
