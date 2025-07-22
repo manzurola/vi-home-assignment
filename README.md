@@ -10,6 +10,8 @@ Product Assumptions:
 3. Assuming no real time data requirements, so scraping is done by a separate component. Assuming scraping of data could be frequent and intensive.
    4. Since tmdb is rate limited and could be slow or non existent, we don't want to fail requests on that.
 
+API Changes:
+1. Added ID fields to return objects for easy fetching to augment data via API or UI
 
 Possible Performance Optimizations:
 1. data scraping

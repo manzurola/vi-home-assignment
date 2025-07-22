@@ -12,22 +12,22 @@ export class AggregateRepository {
 
   async getMoviesPerActor(): Promise<MoviesPerActorResponse> {
     const rows = await this.dataSource.query(`
-      SELECT a.name AS "actorName", array_agg(m.title) AS "movies"
+      SELECT a.id AS "actorId", a.name AS "actorName", m.id AS "movieId", m.title AS "movieTitle"
       FROM actors a
       JOIN movie_cast mc ON mc.actor_id = a.id
       JOIN movies m ON mc.movie_id = m.id
-      GROUP BY a.name
     `);
     const result: MoviesPerActorResponse = {};
     for (const row of rows) {
-      result[row.actorName] = row.movies;
+      if (!result[row.actorName]) result[row.actorName] = [];
+      result[row.actorName].push({ id: row.movieId, title: row.movieTitle });
     }
     return result;
   }
 
   async getActorsWithMultipleCharacters(): Promise<ActorsWithMultipleCharactersResponse> {
     const rows = await this.dataSource.query(`
-      SELECT a.name AS "actorName", m.title AS "movieName", c.name AS "characterName"
+      SELECT a.id AS "actorId", a.name AS "actorName", m.id AS "movieId", m.title AS "movieName", c.id AS "characterId", c.name AS "characterName"
       FROM actors a
       JOIN movie_cast mc ON mc.actor_id = a.id
       JOIN characters c ON mc.character_id = c.id
@@ -43,14 +43,19 @@ export class AggregateRepository {
     const result: ActorsWithMultipleCharactersResponse = {};
     for (const row of rows) {
       if (!result[row.actorName]) result[row.actorName] = [];
-      result[row.actorName].push({ movieName: row.movieName, characterName: row.characterName });
+      result[row.actorName].push({
+        movieId: row.movieId,
+        movieName: row.movieName,
+        characterId: row.characterId,
+        characterName: row.characterName,
+      });
     }
     return result;
   }
 
   async getCharactersWithMultipleActors(): Promise<CharactersWithMultipleActorsResponse> {
     const rows = await this.dataSource.query(`
-      SELECT c.name AS "characterName", m.title AS "movieName", a.name AS "actorName"
+      SELECT c.id AS "characterId", c.name AS "characterName", m.id AS "movieId", m.title AS "movieName", a.id AS "actorId", a.name AS "actorName"
       FROM characters c
       JOIN movie_cast mc ON mc.character_id = c.id
       JOIN actors a ON mc.actor_id = a.id
@@ -66,7 +71,12 @@ export class AggregateRepository {
     const result: CharactersWithMultipleActorsResponse = {};
     for (const row of rows) {
       if (!result[row.characterName]) result[row.characterName] = [];
-      result[row.characterName].push({ movieName: row.movieName, actorName: row.actorName });
+      result[row.characterName].push({
+        movieId: row.movieId,
+        movieName: row.movieName,
+        actorId: row.actorId,
+        actorName: row.actorName,
+      });
     }
     return result;
   }
