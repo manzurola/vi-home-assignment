@@ -10,11 +10,12 @@ import { Actor } from '../entities/actor.entity';
 import { Character } from '../entities/character.entity';
 import { MovieCast } from '../entities/movie-cast.entity';
 import { ScrapingResult, ScrapingError, MoviesData } from './interfaces/tmdb.interface';
+import { TmdbDataFetcher } from './tmdb-data-fetcher';
 
 @Injectable()
 export class DataScraperService {
   private readonly logger = new Logger(DataScraperService.name);
-  private readonly tmdb: TMDB;
+  private readonly tmdbDataFetcher: TmdbDataFetcher;
 
   constructor(
     @InjectRepository(Movie)
@@ -26,7 +27,7 @@ export class DataScraperService {
     @InjectRepository(MovieCast)
     private movieCastRepository: Repository<MovieCast>,
   ) {
-    this.tmdb = new TMDB(process.env.TMDB_API_KEY || 'your-tmdb-api-key');
+    this.tmdbDataFetcher = new TmdbDataFetcher(process.env.TMDB_API_KEY || 'your-tmdb-api-key');
   }
 
   async scrapeAllMovies(): Promise<ScrapingResult> {
@@ -100,7 +101,7 @@ export class DataScraperService {
 
   private async fetchMovieFromTMDB(tmdbId: number) {
     try {
-      const movieDetails = await this.tmdb.movies.details(tmdbId);
+      const movieDetails = await this.tmdbDataFetcher.fetchMovieDetails(tmdbId);
       return movieDetails;
     } catch (error: any) {
       this.logger.error(`Error fetching movie from TMDB (ID: ${tmdbId}):`, error.message);
@@ -110,7 +111,7 @@ export class DataScraperService {
 
   private async fetchMovieCredits(tmdbId: number) {
     try {
-      const credits = await this.tmdb.movies.credits(tmdbId);
+      const credits = await this.tmdbDataFetcher.fetchMovieCredits(tmdbId);
       return credits;
     } catch (error: any) {
       this.logger.error(`Error fetching movie credits from TMDB (ID: ${tmdbId}):`, error.message);

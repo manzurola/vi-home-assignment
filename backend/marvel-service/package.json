@@ -26,15 +26,17 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
-    "@nestjs/config": "^4.0.2",
-    "typeorm": "^0.3.17",
+    "bottleneck": "^2.19.5",
+    "p-retry": "^6.2.1",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "tmdb-ts": "^2.0.1"
+    "tmdb-ts": "^2.0.1",
+    "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
