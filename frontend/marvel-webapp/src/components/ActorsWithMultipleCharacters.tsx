@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { fetchActorsWithMultipleCharacters } from '../api';
-import { Box, Card, CardContent, Typography, List, ListItem, CircularProgress, Pagination, Stack } from '@mui/material';
+import { fetchActorsWithMultipleCharacters, ActorCharacterRole, PaginatedResult } from '../api';
+import { Box, Card, CardContent, Typography, List, ListItem, CircularProgress, Pagination } from '@mui/material';
 
-export default function ActorsWithMultipleCharacters() {
-  const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
+type ActorsWithMultipleCharactersData = PaginatedResult<Record<string, ActorCharacterRole[]>>;
+
+const pageSize = 10;
+
+const ActorsWithMultipleCharacters: React.FC = () => {
+  const [data, setData] = useState<ActorsWithMultipleCharactersData>({ items: {}, page: 1, pageSize, totalCount: 0 });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setLoading(true);
@@ -56,4 +59,6 @@ export default function ActorsWithMultipleCharacters() {
       </Box>
     </Box>
   );
-} 
+};
+
+export default ActorsWithMultipleCharacters; 

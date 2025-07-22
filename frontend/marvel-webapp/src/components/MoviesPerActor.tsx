@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { fetchMoviesPerActor } from '../api';
+import { fetchMoviesPerActor, MovieSummary, PaginatedResult } from '../api';
 import { Box, Card, CardContent, Typography, List, ListItem, Button, CircularProgress, Pagination, Stack } from '@mui/material';
 
-export default function MoviesPerActor() {
-  const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
-  const [selectedActor, setSelectedActor] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
+const pageSize = 10;
+
+type MoviesPerActorData = PaginatedResult<Record<string, MovieSummary[]>>;
+
+const MoviesPerActor: React.FC = () => {
+  const [data, setData] = useState<MoviesPerActorData>({ items: {}, page: 1, pageSize, totalCount: 0 });
+  const [selectedActor, setSelectedActor] = useState<string>('');
+  const [movies, setMovies] = useState<MovieSummary[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setLoading(true);
@@ -26,7 +29,7 @@ export default function MoviesPerActor() {
       });
   }, [page]);
 
-  const handleActorSelect = (actor) => {
+  const handleActorSelect = (actor: string) => {
     setSelectedActor(actor);
     setMovies(data.items[actor] || []);
   };
@@ -78,4 +81,6 @@ export default function MoviesPerActor() {
       </Stack>
     </Box>
   );
-} 
+};
+
+export default MoviesPerActor; 

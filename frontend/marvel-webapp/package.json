@@ -41,6 +41,10 @@
     ]
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.8.3"
   }
 }

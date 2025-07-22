@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCharactersWithMultipleActors } from '../api';
+import { fetchCharactersWithMultipleActors, CharacterActorRole, PaginatedResult } from '../api';
 import { Box, Card, CardContent, Typography, List, ListItem, CircularProgress, Pagination } from '@mui/material';
 
-export default function CharactersWithMultipleActors() {
-  const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
+type CharactersWithMultipleActorsData = PaginatedResult<Record<string, CharacterActorRole[]>>;
+
+const pageSize = 10;
+
+const CharactersWithMultipleActors: React.FC = () => {
+  const [data, setData] = useState<CharactersWithMultipleActorsData>({ items: {}, page: 1, pageSize, totalCount: 0 });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setLoading(true);
@@ -56,4 +59,6 @@ export default function CharactersWithMultipleActors() {
       </Box>
     </Box>
   );
-} 
+};
+
+export default CharactersWithMultipleActors; 

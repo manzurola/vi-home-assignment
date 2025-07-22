@@ -10,9 +10,9 @@ import Tabs from '@mui/material/Tabs';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-function App() {
-  const [tab, setTab] = useState(0);
-  const handleTabChange = (event, newValue) => setTab(newValue);
+const App: React.FC = () => {
+  const [tab, setTab] = useState<number>(0);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => setTab(newValue);
 
   return (
     <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
