@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitialUuidSchema1704000000000 implements MigrationInterface {
+export class InitialSchema1704000000000 implements MigrationInterface {
   name = 'InitialUuidSchema1704000000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -59,9 +59,15 @@ export class InitialUuidSchema1704000000000 implements MigrationInterface {
     `);
 
     // Create indexes for performance
-    await queryRunner.query(`CREATE INDEX "IDX_movie_cast_movie_id" ON "movie_cast" ("movie_id")`);
-    await queryRunner.query(`CREATE INDEX "IDX_movie_cast_actor_id" ON "movie_cast" ("actor_id")`);
-    await queryRunner.query(`CREATE INDEX "IDX_movie_cast_character_id" ON "movie_cast" ("character_id")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_movie_cast_movie_id" ON "movie_cast" ("movie_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_movie_cast_actor_id" ON "movie_cast" ("actor_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_movie_cast_character_id" ON "movie_cast" ("character_id")`,
+    );
 
     // Create unique constraint to prevent duplicate cast entries
     await queryRunner.query(`
@@ -90,22 +96,28 @@ export class InitialUuidSchema1704000000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign key constraints
-    await queryRunner.query(`ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_character"`);
-    await queryRunner.query(`ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_actor"`);
-    await queryRunner.query(`ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_movie"`);
-    
+    await queryRunner.query(
+      `ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_character"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_actor"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "movie_cast" DROP CONSTRAINT "FK_movie_cast_movie"`,
+    );
+
     // Drop indexes
     await queryRunner.query(`DROP INDEX "IDX_movie_cast_unique"`);
     await queryRunner.query(`DROP INDEX "IDX_movie_cast_character_id"`);
     await queryRunner.query(`DROP INDEX "IDX_movie_cast_actor_id"`);
     await queryRunner.query(`DROP INDEX "IDX_movie_cast_movie_id"`);
-    
+
     // Drop tables in reverse order
     await queryRunner.query(`DROP TABLE "movie_cast"`);
     await queryRunner.query(`DROP TABLE "characters"`);
     await queryRunner.query(`DROP TABLE "actors"`);
     await queryRunner.query(`DROP TABLE "movies"`);
-    
+
     // Note: We don't drop the uuid-ossp extension as it might be used by other parts of the database
   }
 }
