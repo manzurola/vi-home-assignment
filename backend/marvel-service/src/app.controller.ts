@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
 import {
   MoviesPerActorResponse,
   ActorsWithMultipleCharactersResponse,
@@ -7,21 +8,20 @@ import {
 
 @Controller()
 export class AppController {
+  constructor(private readonly appService: AppService) {}
+
   @Get('/moviesPerActor')
   getMoviesPerActor(): Promise<MoviesPerActorResponse> {
-    // Implementation will be added later
-    return null as any;
+    return this.appService.getMoviesPerActor();
   }
 
   @Get('/actorsWithMultipleCharacters')
   getActorsWithMultipleCharacters(): Promise<ActorsWithMultipleCharactersResponse> {
-    // Implementation will be added later
-    return null as any;
+    return this.appService.getActorsWithMultipleCharacters();
   }
 
   @Get('/charactersWithMultipleActors')
   getCharactersWithMultipleActors(): Promise<CharactersWithMultipleActorsResponse> {
-    // Implementation will be added later
-    return null as any;
+    return this.appService.getCharactersWithMultipleActors();
   }
-}
+} 
