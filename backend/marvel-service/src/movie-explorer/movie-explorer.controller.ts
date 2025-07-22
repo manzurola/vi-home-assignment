@@ -5,16 +5,16 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { AppService } from './app.service';
+import { MovieExplorerService } from './movie-explorer.service';
 import {
   ActorsWithMultipleCharactersResponse,
   CharactersWithMultipleActorsResponse,
   MoviesPerActorResponse,
-} from './app.controller.types';
+} from './movie-explorer.controller.types';
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class MovieExplorerController {
+  constructor(private readonly appService: MovieExplorerService) {}
 
   /**
    * Returns a mapping of actor name to an array of movies (with IDs and titles) they appeared in.

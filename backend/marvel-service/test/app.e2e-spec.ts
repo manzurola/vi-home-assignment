@@ -2,18 +2,26 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { MovieExplorerModule } from '../src/movie-explorer/movie-explorer.module';
 
-describe('AppController (e2e)', () => {
+describe('MovieExplorerController (e2e)', () => {
   let app: INestApplication<App>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [MovieExplorerModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+  });
+
+  beforeAll(async () => {
+    // Ensure the database is seeded with movie/actor/character data before tests
+    // This will fetch data from TMDB and populate the DB (may take a few minutes)
+    await request(app.getHttpServer())
+      .post('/data-scraper/scrape-movies')
+      .expect(200);
   });
 
   it('/ (GET)', () => {

@@ -7,10 +7,10 @@ import {
   CharactersWithMultipleActorsResponse,
   MoviesPerActorResponse,
   MovieSummary,
-} from './app.controller.types';
+} from './movie-explorer.controller.types';
 
 @Injectable()
-export class AggregateRepository {
+export class MovieExplorerRepository {
   constructor(private readonly dataSource: DataSource) {}
 
   async getMoviesPerActor(
@@ -31,7 +31,8 @@ export class AggregateRepository {
       `,
       [pageSize, (page - 1) * pageSize],
     );
-    if (actorRows.length === 0) return { items: {}, page, pageSize, totalCount };
+    if (actorRows.length === 0)
+      return { items: {}, page, pageSize, totalCount };
     const actorIds = actorRows.map((row: any) => row.id);
     // Step 2: Fetch all movies for these actors
     const rows = await this.dataSource.query(

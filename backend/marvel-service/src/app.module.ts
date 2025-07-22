@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MovieExplorerModule } from './movie-explorer/movie-explorer.module';
 import { DataScraperModule } from './data-scraper/data-scraper.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AggregateRepository } from './aggregate.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -20,8 +18,8 @@ import { AggregateRepository } from './aggregate.repository';
       inject: [ConfigService],
     }),
     DataScraperModule,
+    MovieExplorerModule,
+    DataScraperModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, AggregateRepository],
 })
 export class AppModule {}

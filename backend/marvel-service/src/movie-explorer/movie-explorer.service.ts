@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AggregateRepository } from './aggregate.repository';
+import { MovieExplorerRepository } from './movie-explorer.repository';
 import {
   ActorsWithMultipleCharactersResponse,
   CharactersWithMultipleActorsResponse,
   MoviesPerActorResponse,
-} from './app.controller.types';
+} from './movie-explorer.controller.types';
 
 @Injectable()
-export class AppService {
-  constructor(private readonly aggregateRepo: AggregateRepository) {}
+export class MovieExplorerService {
+  constructor(private readonly aggregateRepo: MovieExplorerRepository) {}
 
   /**
    * Returns a mapping of actor name to an array of movies (with IDs and titles) they appeared in.

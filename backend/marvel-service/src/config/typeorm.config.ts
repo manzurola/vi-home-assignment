@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
-import { Movie } from '../entities/movie.entity';
-import { Actor } from '../entities/actor.entity';
-import { Character } from '../entities/character.entity';
-import { MovieCast } from '../entities/movie-cast.entity';
+import { Movie } from '../movie-explorer/entities/movie.entity';
+import { Actor } from '../movie-explorer/entities/actor.entity';
+import { Character } from '../movie-explorer/entities/character.entity';
+import { MovieCast } from '../movie-explorer/entities/movie-cast.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
