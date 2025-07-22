@@ -2,35 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { fetchMoviesPerActor } from '../api';
 
 export default function MoviesPerActor() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({ items: {}, page: 1, pageSize: 50, totalCount: 0 });
   const [selectedActor, setSelectedActor] = useState('');
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     setLoading(true);
-    fetchMoviesPerActor()
+    fetchMoviesPerActor(page, pageSize)
       .then((res) => {
         setData(res);
         setLoading(false);
+        setSelectedActor('');
+        setMovies([]);
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [page]);
 
   const handleActorSelect = (actor) => {
     setSelectedActor(actor);
-    setMovies(data[actor] || []);
+    setMovies(data.items[actor] || []);
   };
 
   if (loading) return <div>Loading actors...</div>;
   if (error) return <div style={{color:'red'}}>Error: {error}</div>;
-  if (!data) return null;
+  if (!data.items) return null;
 
-  const actors = Object.keys(data);
+  const actors = Object.keys(data.items);
+  const totalPages = Math.ceil(data.totalCount / pageSize);
 
   return (
     <div>
@@ -47,6 +52,11 @@ export default function MoviesPerActor() {
               </li>
             ))}
           </ul>
+          <div style={{ marginTop: 10 }}>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>Prev</button>
+            <span style={{ margin: '0 8px' }}>Page {page} of {totalPages}</span>
+            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next</button>
+          </div>
         </div>
         <div>
           <h3>Movies</h3>

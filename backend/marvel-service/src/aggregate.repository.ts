@@ -22,17 +22,28 @@ export class AggregateRepository {
       'SELECT COUNT(*) FROM actors',
     );
     const totalCount = parseInt(countResult[0].count, 10);
-    // Paginated query
+    // Step 1: Paginate actors
+    const actorRows = await this.dataSource.query(
+      `
+      SELECT id, name FROM actors
+      ORDER BY name
+      LIMIT $1 OFFSET $2
+      `,
+      [pageSize, (page - 1) * pageSize],
+    );
+    if (actorRows.length === 0) return { items: {}, page, pageSize, totalCount };
+    const actorIds = actorRows.map((row: any) => row.id);
+    // Step 2: Fetch all movies for these actors
     const rows = await this.dataSource.query(
       `
       SELECT a.id AS "actorId", a.name AS "actorName", m.id AS "movieId", m.title AS "movieTitle"
       FROM actors a
       JOIN movie_cast mc ON mc.actor_id = a.id
       JOIN movies m ON mc.movie_id = m.id
+      WHERE a.id = ANY($1)
       ORDER BY a.name
-      LIMIT $1 OFFSET $2
-    `,
-      [pageSize, (page - 1) * pageSize],
+      `,
+      [actorIds],
     );
     const items: Record<string, MovieSummary[]> = {};
     for (const row of rows) {
@@ -46,16 +57,16 @@ export class AggregateRepository {
     page: number,
     pageSize: number,
   ): Promise<ActorsWithMultipleCharactersResponse> {
-    // Get all actor IDs with multiple characters
+    // Step 1: Paginate actor IDs with multiple characters
     const idRows = await this.dataSource.query(
       `
-      SELECT a.id FROM actors a
+      SELECT a.id, a.name FROM actors a
       WHERE a.id IN (
         SELECT actor_id FROM movie_cast GROUP BY actor_id HAVING COUNT(DISTINCT character_id) > 1
       )
       ORDER BY a.name
       LIMIT $1 OFFSET $2
-    `,
+      `,
       [pageSize, (page - 1) * pageSize],
     );
     const totalCountRows = await this.dataSource.query(`
@@ -66,7 +77,7 @@ export class AggregateRepository {
     const totalCount = parseInt(totalCountRows[0].count, 10);
     if (idRows.length === 0) return { items: {}, page, pageSize, totalCount };
     const actorIds = idRows.map((row: any) => row.id);
-    // Get roles for these actors
+    // Step 2: Fetch all roles for these actors
     const rows = await this.dataSource.query(
       `
       SELECT a.id AS "actorId", a.name AS "actorName", m.id AS "movieId", m.title AS "movieName", c.id AS "characterId", c.name AS "characterName"
@@ -76,7 +87,7 @@ export class AggregateRepository {
       JOIN movies m ON mc.movie_id = m.id
       WHERE a.id = ANY($1)
       ORDER BY a.name
-    `,
+      `,
       [actorIds],
     );
     const items: Record<string, ActorCharacterRole[]> = {};
@@ -96,16 +107,16 @@ export class AggregateRepository {
     page: number,
     pageSize: number,
   ): Promise<CharactersWithMultipleActorsResponse> {
-    // Get all character IDs with multiple actors
+    // Step 1: Paginate character IDs with multiple actors
     const idRows = await this.dataSource.query(
       `
-      SELECT c.id FROM characters c
+      SELECT c.id, c.name FROM characters c
       WHERE c.id IN (
         SELECT character_id FROM movie_cast GROUP BY character_id HAVING COUNT(DISTINCT actor_id) > 1
       )
       ORDER BY c.name
       LIMIT $1 OFFSET $2
-    `,
+      `,
       [pageSize, (page - 1) * pageSize],
     );
     const totalCountRows = await this.dataSource.query(`
@@ -116,7 +127,7 @@ export class AggregateRepository {
     const totalCount = parseInt(totalCountRows[0].count, 10);
     if (idRows.length === 0) return { items: {}, page, pageSize, totalCount };
     const characterIds = idRows.map((row: any) => row.id);
-    // Get roles for these characters
+    // Step 2: Fetch all roles for these characters
     const rows = await this.dataSource.query(
       `
       SELECT c.id AS "characterId", c.name AS "characterName", m.id AS "movieId", m.title AS "movieName", a.id AS "actorId", a.name AS "actorName"
@@ -126,7 +137,7 @@ export class AggregateRepository {
       JOIN movies m ON mc.movie_id = m.id
       WHERE c.id = ANY($1)
       ORDER BY c.name
-    `,
+      `,
       [characterIds],
     );
     const items: Record<string, CharacterActorRole[]> = {};
