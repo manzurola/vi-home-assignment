@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DataScraperModule } from './data-scraper/data-scraper.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -17,6 +18,7 @@ import databaseConfig from './config/database.config';
         configService.get('database')!,
       inject: [ConfigService],
     }),
+    DataScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService],
