@@ -8,10 +8,8 @@ import { Character } from '../entities/character.entity';
 import { MovieCast } from '../entities/movie-cast.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Movie, Actor, Character, MovieCast]),
-  ],
+  imports: [TypeOrmModule.forFeature([Movie, Actor, Character, MovieCast])],
   controllers: [DataScraperController],
   providers: [DataScraperService],
 })
-export class DataScraperModule {} 
+export class DataScraperModule {}

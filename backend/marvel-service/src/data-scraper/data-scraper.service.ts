@@ -3,13 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { join } from 'path';
 import { readFileSync } from 'fs';
-import { TMDB } from 'tmdb-ts';
 
 import { Movie } from '../entities/movie.entity';
 import { Actor } from '../entities/actor.entity';
 import { Character } from '../entities/character.entity';
 import { MovieCast } from '../entities/movie-cast.entity';
-import { ScrapingResult, ScrapingError, MoviesData } from './interfaces/tmdb.interface';
+import { MoviesData, ScrapingResult } from './interfaces/tmdb.interface';
 import { TmdbDataFetcher } from './tmdb-data-fetcher';
 
 @Injectable()
@@ -27,12 +26,14 @@ export class DataScraperService {
     @InjectRepository(MovieCast)
     private movieCastRepository: Repository<MovieCast>,
   ) {
-    this.tmdbDataFetcher = new TmdbDataFetcher(process.env.TMDB_API_KEY || 'your-tmdb-api-key');
+    this.tmdbDataFetcher = new TmdbDataFetcher(
+      process.env.TMDB_API_KEY || 'your-tmdb-api-key',
+    );
   }
 
   async scrapeAllMovies(): Promise<ScrapingResult> {
     this.logger.log('Starting movie scraping process...');
-    
+
     const moviesData = this.loadMoviesFromFile();
     const scrapingResults: ScrapingResult = {
       moviesProcessed: 0,
@@ -75,14 +76,19 @@ export class DataScraperService {
         try {
           // Save or update actor
           const actor = await this.saveOrUpdateActor(castMember);
-          
+
           // Save or update character
-          const character = await this.saveOrUpdateCharacter(castMember.character);
-          
+          const character = await this.saveOrUpdateCharacter(
+            castMember.character,
+          );
+
           // Save or update movie cast relation
           await this.saveOrUpdateMovieCast(movie, actor, character, castMember);
         } catch (error) {
-          this.logger.error(`Error processing cast member ${castMember.name}:`, error.message);
+          this.logger.error(
+            `Error processing cast member ${castMember.name}:`,
+            error.message,
+          );
         }
       }
     }
@@ -104,7 +110,10 @@ export class DataScraperService {
       const movieDetails = await this.tmdbDataFetcher.fetchMovieDetails(tmdbId);
       return movieDetails;
     } catch (error: any) {
-      this.logger.error(`Error fetching movie from TMDB (ID: ${tmdbId}):`, error.message);
+      this.logger.error(
+        `Error fetching movie from TMDB (ID: ${tmdbId}):`,
+        error.message,
+      );
       throw error;
     }
   }
@@ -114,7 +123,10 @@ export class DataScraperService {
       const credits = await this.tmdbDataFetcher.fetchMovieCredits(tmdbId);
       return credits;
     } catch (error: any) {
-      this.logger.error(`Error fetching movie credits from TMDB (ID: ${tmdbId}):`, error.message);
+      this.logger.error(
+        `Error fetching movie credits from TMDB (ID: ${tmdbId}):`,
+        error.message,
+      );
       throw error;
     }
   }
@@ -124,7 +136,9 @@ export class DataScraperService {
       where: { tmdb_id: movieData.id },
     });
 
-    const releaseDate = movieData.release_date ? new Date(movieData.release_date) : null;
+    const releaseDate = movieData.release_date
+      ? new Date(movieData.release_date)
+      : null;
 
     if (movie) {
       // Update existing movie
@@ -165,7 +179,9 @@ export class DataScraperService {
     return await this.actorRepository.save(actor);
   }
 
-  private async saveOrUpdateCharacter(characterName: string): Promise<Character> {
+  private async saveOrUpdateCharacter(
+    characterName: string,
+  ): Promise<Character> {
     if (!characterName || characterName.trim() === '') {
       characterName = 'Unknown Character';
     }
@@ -215,4 +231,4 @@ export class DataScraperService {
 
     return await this.movieCastRepository.save(movieCast);
   }
-} 
+}

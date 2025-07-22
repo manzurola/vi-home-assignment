@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { MovieCast } from './movie-cast.entity';
 
 @Entity('characters')
@@ -9,7 +16,7 @@ export class Character {
   @Column()
   name: string;
 
-  @OneToMany(() => MovieCast, movieCast => movieCast.character)
+  @OneToMany(() => MovieCast, (movieCast) => movieCast.character)
   portrayals: MovieCast[];
 
   @CreateDateColumn()

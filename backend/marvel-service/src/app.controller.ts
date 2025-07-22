@@ -1,9 +1,15 @@
-import { Controller, Get, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import {
-  MoviesPerActorResponse,
   ActorsWithMultipleCharactersResponse,
   CharactersWithMultipleActorsResponse,
+  MoviesPerActorResponse,
 } from './app.controller.types';
 
 @Controller()
@@ -42,4 +48,4 @@ export class AppController {
   ): Promise<CharactersWithMultipleActorsResponse> {
     return this.appService.getCharactersWithMultipleActors(page, pageSize);
   }
-} 
+}

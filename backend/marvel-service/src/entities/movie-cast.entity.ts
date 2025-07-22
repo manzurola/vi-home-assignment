@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Movie } from './movie.entity';
 import { Actor } from './actor.entity';
 import { Character } from './character.entity';
@@ -9,15 +18,17 @@ export class MovieCast {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Movie, movie => movie.cast, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Movie, (movie) => movie.cast, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'movie_id' })
   movie: Movie;
 
-  @ManyToOne(() => Actor, actor => actor.movie_roles, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Actor, (actor) => actor.movie_roles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'actor_id' })
   actor: Actor;
 
-  @ManyToOne(() => Character, character => character.portrayals, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Character, (character) => character.portrayals, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'character_id' })
   character: Character;
 

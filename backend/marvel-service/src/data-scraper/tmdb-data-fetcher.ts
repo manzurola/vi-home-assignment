@@ -18,13 +18,13 @@ export class TmdbDataFetcher {
 
   async fetchMovieDetails(tmdbId: number) {
     return tmdbLimiter.schedule(() =>
-      pRetry(() => this.tmdb.movies.details(tmdbId), { retries: 3 })
+      pRetry(() => this.tmdb.movies.details(tmdbId), { retries: 3 }),
     );
   }
 
   async fetchMovieCredits(tmdbId: number) {
     return tmdbLimiter.schedule(() =>
-      pRetry(() => this.tmdb.movies.credits(tmdbId), { retries: 3 })
+      pRetry(() => this.tmdb.movies.credits(tmdbId), { retries: 3 }),
     );
   }
-} 
+}

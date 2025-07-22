@@ -1,4 +1,4 @@
-import { Controller, Post, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { DataScraperService } from './data-scraper.service';
 
 @Controller('data-scraper')
