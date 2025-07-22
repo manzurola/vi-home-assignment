@@ -15,6 +15,6 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     database: process.env.DB_NAME || 'marvel_db',
     entities: [Movie, Actor, Character, MovieCast],
     migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
-    logging: Boolean(process.env.LOG_TYPEORM),
+    logging: process.env.LOG_TYPEORM === 'true',
   };
 });
