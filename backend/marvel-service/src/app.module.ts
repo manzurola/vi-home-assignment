@@ -3,6 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataScraperModule } from './data-scraper/data-scraper.module';
 import databaseConfig from './config/database.config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AggregateRepository } from './aggregate.repository';
 
 @Module({
   imports: [
@@ -18,5 +21,7 @@ import databaseConfig from './config/database.config';
     }),
     DataScraperModule,
   ],
+  controllers: [AppController],
+  providers: [AppService, AggregateRepository],
 })
 export class AppModule {}

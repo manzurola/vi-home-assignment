@@ -16,6 +16,7 @@ export class InitialSchema1704000000000 implements MigrationInterface {
         "release_date" date,
         "overview" text,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         CONSTRAINT "UQ_movies_tmdb_id" UNIQUE ("tmdb_id"),
         CONSTRAINT "PK_movies" PRIMARY KEY ("id")
       )
@@ -29,6 +30,7 @@ export class InitialSchema1704000000000 implements MigrationInterface {
         "name" character varying NOT NULL,
         "profile_path" character varying,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         CONSTRAINT "UQ_actors_tmdb_id" UNIQUE ("tmdb_id"),
         CONSTRAINT "PK_actors" PRIMARY KEY ("id")
       )
@@ -40,6 +42,7 @@ export class InitialSchema1704000000000 implements MigrationInterface {
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "name" character varying NOT NULL,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         CONSTRAINT "PK_characters" PRIMARY KEY ("id")
       )
     `);
@@ -51,6 +54,7 @@ export class InitialSchema1704000000000 implements MigrationInterface {
         "character_name" character varying,
         "cast_order" integer,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         "movie_id" uuid,
         "actor_id" uuid,
         "character_id" uuid,
