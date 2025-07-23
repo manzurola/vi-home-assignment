@@ -48,7 +48,9 @@ A nestJS backend. Two main components:
 ### data-scraper
    1. Scrapes tmdb in an offline manner, currently invoked by API for development/testing convenience at `/data-scraper/scrape-movies`
    2. Data to populate is defined in `movies-and-actors.json`
-   3. Future enhancements to support larger data scale:
+   3. Rate limiting done via [Bottleneck](https://www.npmjs.com/package/bottleneck), exponential retires by [p-retry](https://www.npmjs.com/package/p-retry)
+   4. Errors logged and returned in response (best effort approach)
+   5. Future enhancements to support larger data scale:
       1. Maintain a table log for with state of each movie to be processed (pending/failed/in-progress/fetch-completed/load-completed). This will be the trigger to which data should be loaded, instead of the json file.
       2. Store the raw data fetched
       3. We shall separate the fetching of data from its loading into the databases, this way we can do both concurrently. One components fetches from tmdb, the other in parallel scans the unhandled raw data and loads in db.
