@@ -31,6 +31,9 @@ jobs:
       - name: Copy .env.test to .env for Docker Compose
         run: cp .env.test .env
 
+      - name: Show TMDB_API_KEY in .env
+        run: grep TMDB_API_KEY .env
+
       - name: Run e2e tests
         run: npm run test:e2e
 
