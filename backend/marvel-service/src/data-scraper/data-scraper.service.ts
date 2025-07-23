@@ -186,6 +186,7 @@ export class DataScraperService {
       characterName = 'Unknown Character';
     }
 
+    // Finding by name is a best effort for now. It's possible more sophisticated heuristics will be needed someday
     let character = await this.characterRepository.findOne({
       where: { name: characterName },
     });

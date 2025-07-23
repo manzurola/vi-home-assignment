@@ -14,5 +14,5 @@ export const AppDataSource = new DataSource({
   entities: [Movie, Actor, Character, MovieCast],
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
   synchronize: false,
-  logging: true,
+  logging: process.env.LOG_TYPEORM === 'true',
 });

@@ -1,19 +1,13 @@
-/**
- * Generic paginated result wrapper for API responses.
- */
-export interface PaginatedResult<T> {
-  items: T;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-}
-
 // Movies Per Actor Endpoint
+import { PaginatedResult } from '../common/paginated-result';
+
 export interface MovieSummary {
   id: string;
   title: string;
 }
-export type MoviesPerActorResponse = PaginatedResult<Record<string, MovieSummary[]>>;
+export type MoviesPerActorResponse = PaginatedResult<
+  Record<string, MovieSummary[]>
+>;
 
 // Actors with Multiple Characters Endpoint
 export interface ActorCharacterRole {
@@ -22,7 +16,9 @@ export interface ActorCharacterRole {
   characterId: string;
   characterName: string;
 }
-export type ActorsWithMultipleCharactersResponse = PaginatedResult<Record<string, ActorCharacterRole[]>>;
+export type ActorsWithMultipleCharactersResponse = PaginatedResult<
+  Record<string, ActorCharacterRole[]>
+>;
 
 // Characters with Multiple Actors Endpoint
 export interface CharacterActorRole {
@@ -31,4 +27,6 @@ export interface CharacterActorRole {
   actorId: string;
   actorName: string;
 }
-export type CharactersWithMultipleActorsResponse = PaginatedResult<Record<string, CharacterActorRole[]>>; 
+export type CharactersWithMultipleActorsResponse = PaginatedResult<
+  Record<string, CharacterActorRole[]>
+>;

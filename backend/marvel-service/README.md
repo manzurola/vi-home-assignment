@@ -57,6 +57,27 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Database Migrations
+
+To keep your database schema in sync with your TypeORM entity models, use the following workflow:
+
+1. **Change your entity models** (add, remove, or modify fields, tables, or relations).
+2. Run the following command to generate a new migration file based on your changes:
+
+```bash
+npm run migration:generate -- -n MigrationName
+```
+Replace `MigrationName` with a descriptive name for your migration.
+
+3. To apply all pending migrations to your database, run:
+
+```bash
+npm run migration:run
+```
+
+- You only need to run `migration:generate` if you have made changes to your entities and want to create a new migration file.
+- If you already have migration files and just want to apply them, use `migration:run`.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
