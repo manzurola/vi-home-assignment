@@ -2,7 +2,19 @@
 
 A full-stack application to explore Marvel movies, actors, and characters.
 
-# About the Product:
+# Running the Fullstack Project
+
+Prerequisite: Make sure you have docker installed
+
+1. Clone the repo
+2. To run both frontend and backend applications for local poc:
+    1. Add the TMDB_API_KEY value to `backend/marvel-service/.env.test`
+    2. From the root folder run - `./scripts/start_local` - starts dockerized services
+    3. Once completed, run the following to populate the database from tmdb
+       `curl -X POST http://localhost:3000/data-scraper/scrape-movies`
+    4. Then access the UI at will :)
+
+# Product Requirements:
 
 ## Current Assumptions
 
@@ -11,7 +23,7 @@ A full-stack application to explore Marvel movies, actors, and characters.
 3. The initial data to fetch includes movies and actors. It seems that actors are defined perhaps to only allow them in the search. I removed this limitation and only scraping movies with all their associated actors.
 4. Pagination added to all APIs
 5. A larger dataset is supported but under the current json configuration. This should be changed once set is large enough.
-6. I didn't add any user facing features (pagination only), both due to lack of time and I chose to go with the "wait until someone asks" approach for this one
+6. I didn't add any user facing features (pagination only), both due to lack of time and I chose to go with the "wait until someone asks" approach for this one. My extra time focus went to make sure this is maintainable and easily extensible by other devs.
 7. The current API definitions are not very extensible. For example, entity keys are by name, not ID. I added an ID to associations for future features. Also the path naming - a verb+object, is not very REST friendly. Will probably change later to a more HATEOS approach, i.e. `/movies/<move-id>/actors` etc. I left it as is for now.
 
 ## Possible Future features
@@ -35,7 +47,7 @@ A nestJS backend. Two main components:
    2. Pagination included in all three endpoints
    5. e2e test that runs postgres via docker, populates the db via actual tmdb access and asserts success scenario on all APIs
    6. db schema with UUID, defined for fast reading and ready for fetching actual entities if required
-   7. docker definitions for db and app for production/testing/dev
+   7. docker definitions for db and app for testing/dev
    8. .env file support
    9. health endpoint for production deployments
    10. basic nestJS logging
@@ -57,32 +69,23 @@ A nestJS backend. Two main components:
       4. It's possible that the data loader will be in the service itself, to consolidate db access. We can go further with an even driven arch if needed.
       5. To support multiple providers, we shall add an "externalId" and "externalProvider" to each entity record, maintaining the link to the external platform. Also, perhaps add link to the entry in the log table above.
 
-## marvel-webapp - a react web app
+## marvel-webapp
+
+A simple react web app.
    1. Presents the 3 desired pages via API call to marvel-service
    2. Easily extensible by adding more pages
-   3. docker definitions for production/testing/dev
+   3. docker definitions for testing/dev
    4. .env file support
-
-# Running the services
-
-Prerequisite: Make sure you have docker installed
-
-1. Clone the repo
-2. To run both services and their dependencies in parallel locally:
-   1. Add the TMDB_API_KEY value to `marvel-service/.env.test`
-   2. From the root folder run - `./scripts/start_local` - starts dockerized services
-   3. Once completed, run the following to scrape tmdb (a few good seconds..)
-      `curl -X POST http://localhost:3000/data-scraper/scrape-movies`
-   4. Then access the UI for you pleasure :)
+   5. material-ui as default design system
+   6. default empty states
 
 # Testing and Development
 
 A single e2e test exists on the backend. This test lifts postgres as a docker dependency, runs the scraper against an actual tmdb endpoint, and asserts success scenarios on all three endpoints.
 No test coverage on frontend :(
 
-1. A CI/CD pipeline is in place, running the test on PRs to main.
-2. docker-compose.yml configured with test and dev databases (commands avilable in package.json)
-3. `.env` file integration in place and a sample `.env.test` is available
+To further develop each project, refer to available commands in respective package.json.
+Each project includes a .env.test file for example configuration.
 
 
 
