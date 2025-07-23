@@ -28,9 +28,11 @@ jobs:
       - name: Inject TMDB_API_KEY into .env.test
         run: echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> .env.test
 
+      - name: Copy .env.test to .env for Docker Compose
+        run: cp .env.test .env
+
       - name: Run e2e tests
         run: npm run test:e2e
 
       - name: Show Postgres logs
         run: docker compose logs postgres-test
-        working-directory: backend/marvel-service
