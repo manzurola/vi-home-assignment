@@ -2,10 +2,23 @@
 
 A full-stack application to explore Marvel movies, actors, and characters.
 
+
+# High Level Design and Features
+
 This project is split into two components
 
 1. marvel-service - a nestJS backend
+   1. Serves data via dedicated postgres instance
+   2. Pagination included in all three endpoints
+   3. Data is populated by running the scraper via endpoint `/data-scraper/scrape-movies`
+   4. Data to populated is defined in `movies-and-actors.json`
+   5. e2e test that runs postgres via docker, populates the db via actual tmdb access and asserts success scenario on all APIs
+   6. db schema with UUID, defined for fast reading and ready for fetching actual entities if required
+   7. docker definitions for db and app for testing/local dev
 2. marvel-webapp - a react web app
+   1. Presents the 3 desired pages via API call to marvel-service
+   2. Easily extensible by adding more pages
+   3. docker definitions for testing/local dev
 
 # Running the services
 
@@ -72,6 +85,7 @@ Composed of two main components:
 DATA SCRAPER
 
 This module is responsible for scraping data offline from the tmdb endpoints.
+The initial data to load is specified as a json file `movies-and-actors.json`.
 
 Possible design improvement to support larger scale and multiple providers:
 1. Maintain a table log for with state of each movie to be processed (pending/failed/in-progress/fetch-completed/load-completed). This will be the trigger to which data should be loaded, instead of the json file.
