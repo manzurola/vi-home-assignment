@@ -16,10 +16,10 @@ if [ -f backend/marvel-service/.env.test ]; then
 fi
 
 # Start backend (and db) in detached mode
-docker-compose -f backend/marvel-service/docker-compose.yml up -d
+docker-compose -f backend/marvel-service/docker-compose.yml up -d --build
 
 # Start frontend in detached mode
-docker-compose -f frontend/marvel-webapp/docker-compose.yml up -d
+docker-compose -f frontend/marvel-webapp/docker-compose.yml up -d --build
 
 echo "All services are running!"
 echo "Backend: http://localhost:3000"
