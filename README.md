@@ -69,15 +69,22 @@ A nestJS backend. Two main components:
       4. It's possible that the data loader will be in the service itself, to consolidate db access. We can go further with an even driven arch if needed.
       5. To support multiple providers, we shall add an "externalId" and "externalProvider" to each entity record, maintaining the link to the external platform. Also, perhaps add link to the entry in the log table above.
 
+Technologies: nestJS, Postgres, typescript, typeorm (for db access), bottleneck (rate limit) and p-retry (api retries), docker
+
+
 ## marvel-webapp
 
 A simple react web app.
+
    1. Presents the 3 desired pages via API call to marvel-service
    2. Easily extensible by adding more pages
    3. docker definitions for testing/dev
    4. .env file support
    5. material-ui as default design system
    6. default empty states
+
+Technologies: react, typescript, material-ui, docker
+
 
 # Testing and Development
 
