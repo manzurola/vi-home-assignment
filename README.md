@@ -14,11 +14,13 @@ This project is split into two components
    4. Data to populated is defined in `movies-and-actors.json`
    5. e2e test that runs postgres via docker, populates the db via actual tmdb access and asserts success scenario on all APIs
    6. db schema with UUID, defined for fast reading and ready for fetching actual entities if required
-   7. docker definitions for db and app for testing/local dev
+   7. docker definitions for db and app for production/testing/dev
+   8. .env file support
 2. marvel-webapp - a react web app
    1. Presents the 3 desired pages via API call to marvel-service
    2. Easily extensible by adding more pages
-   3. docker definitions for testing/local dev
+   3. docker definitions for production/testing/dev
+   4. .env file support
 
 # Running the services
 
