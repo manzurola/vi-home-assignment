@@ -10,7 +10,7 @@ This project is split into two components
 # Running the services
 
 1. Clone the repo
-2. Make sure you have docker and npm installed
+2. Make sure you have docker, npm and nvm installed
 
 ## Running `marvel-service`
 
