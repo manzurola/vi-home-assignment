@@ -25,22 +25,5 @@ jobs:
       - name: Inject TMDB_API_KEY into .env.test
         run: echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> backend/marvel-service/.env.test
 
-      - name: Start test database with Docker Compose
-        run: docker compose --env-file backend/marvel-service/.env.test up -d postgres-test
-
-      - name: Wait for Postgres to be ready
-        run: |
-          for i in {1..10}; do
-            docker compose exec -T postgres-test pg_isready -U marvel_test_user -d marvel_test_db && exit 0
-            sleep 2
-          done
-          exit 1
-
-      - name: Run migrations
-        run: npx dotenv -e backend/marvel-service/.env.test -- npm run migration:run --prefix backend/marvel-service
-
       - name: Run e2e tests
-        run: npx dotenv -e backend/marvel-service/.env.test -- npm run test:e2e --prefix backend/marvel-service
-
-      - name: Stop test database
-        run: docker compose down
+        run: npm run test:e2e --prefix backend/marvel-service
