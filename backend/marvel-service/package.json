@@ -19,12 +19,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "docker compose up -d postgres-test && dotenv -e .env.test -- npm run migration:run",
     "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json",
-    "posttest:e2e": "docker compose down -d postgres-test && docker volume rm vi_assignment_postgres_dev_test",
+    "posttest:e2e": "docker compose down -d postgres-test && docker volume rm vi_assignment_postgres_test_data",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
     "docker:up": "docker compose up -d",
-    "db:clean": "docker compose down && docker volume rm -f vi-home-assignment_postgres_dev_data && docker compose up -d"
+    "db:clean": "docker compose down && docker volume rm -f vi-home-assignment_postgres_test_data && docker compose up -d"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
