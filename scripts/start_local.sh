@@ -15,10 +15,6 @@ docker-compose -f backend/marvel-service/docker-compose.yml up -d
 # Start frontend in detached mode
 docker-compose -f frontend/marvel-webapp/docker-compose.yml up -d
 
-# Populate the database
-echo "Populating the database via POST to /data-scraper/scrape-movies..."
-curl -X POST http://localhost:3000/data-scraper/scrape-movies
-
 echo "All services are running!"
 echo "Backend: http://localhost:3000"
 echo "Frontend: http://localhost:3001"

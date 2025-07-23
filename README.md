@@ -24,11 +24,14 @@ This project is split into two components
 
 # Running the services
 
+Prerequisites: Make sure you have docker installed
+
 1. Clone the repo
 2. To run both services and their dependencies in parallel locally:
    1. from the root folder - `./scripts/start_local`
    2. This will invoke the compose file of each service
-2. Make sure you have docker, npm and nvm installed
+   3. Once completed, run the following to scrape tmdb (a few good seconds..)
+      `curl -X POST http://localhost:3000/data-scraper/scrape-movies`
 
 ## Running `marvel-service`
 
