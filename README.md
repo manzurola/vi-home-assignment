@@ -1,98 +1,168 @@
-# Marvel Data Explorer
+# Marvel Movie Data Explorer – Vi Home Assignment
 
-A full-stack application to explore Marvel movies, actors, and characters.
+## Assignment Overview
+This project is a full-stack MVP for exploring Marvel movies, actors, and characters, built as a home assignment for Vi. The goal is to answer questions such as:
+- Which Marvel actors have played multiple characters?
+- Which characters have been portrayed by multiple actors?
+- Which movies has each actor appeared in?
 
-# Running the Fullstack Project
+The application fetches and processes data from the TMDB API, stores it in a database, and exposes endpoints and a simple UI to explore the data.
 
-Prerequisite: Make sure you have docker installed
+---
 
-1. Clone the repo
-2. To run both frontend and backend applications for local poc:
-    1. Add the TMDB_API_KEY value to `backend/marvel-service/.env.test`
-    2. From the root folder run - `./scripts/start_local` - starts dockerized services
-    3. Once completed, run the following to populate the database from tmdb
-       `curl -X POST http://localhost:3000/data-scraper/scrape-movies`
-    4. Then access the UI at will :)
+## Architecture & Service Design
 
-# Product Requirements:
+**High-Level Overview:**
+- The project consists of two main services: a NestJS backend and a React frontend.
+- Data flows from the TMDB API → backend data-scraper → PostgreSQL database → backend API endpoints → frontend UI.
 
-## Current Assumptions
+```mermaid
+flowchart TD
+  A["TMDB API"] -->|"Fetch Marvel Data"| B["data-scraper (NestJS)"]
+  B -->|"Store"| C["PostgreSQL DB"]
+  C -->|"Query"| D["movie-explorer (NestJS API)"]
+  D -->|"REST API"| E["React Frontend"]
+  E -->|"User interacts"| F["Browser"]
 
-1. No real time data requirement. Assumed data is fetched and processed offline (periodically, by invocation etc).
-2. Preparing for large scale (in the scope of this project), for both users and data
-3. The initial data to fetch includes movies and actors. It seems that actors are defined perhaps to only allow them in the search. I removed this limitation and only scraping movies with all their associated actors.
-4. Pagination added to all APIs
-5. A larger dataset is supported but under the current json configuration. This should be changed once set is large enough.
-6. I didn't add any user facing features (pagination only), both due to lack of time and I chose to go with the "wait until someone asks" approach for this one. My extra time focus went to make sure this is maintainable and easily extensible by other devs.
-7. The current API definitions are not very extensible. For example, entity keys are by name, not ID. I added an ID to associations for future features. Also the path naming - a verb+object, is not very REST friendly. Will probably change later to a more HATEOS approach, i.e. `/movies/<move-id>/actors` etc. I left it as is for now.
+  subgraph "Backend"
+    B
+    D
+    C
+  end
 
-## Possible Future features
-Some possible future features are:
-1. Different sorting and searching (as you mentioned as well)
-2. Viewing an actor/character/cast/movie in a separate page (full view, db is ready for that)
-3. Additional entities, perhaps sound engineers, directors etc (db ready)
-4. Additional data providers aside from tmdb (not ready but design suggested below)
-5. Large dataset (unsupported by design suggests below)
-6. Large user base (heavy reads - numbers are pending but should cater to quite a heavy load)
+  subgraph "Frontend"
+    E
+    F
+  end
+```
 
-# High Level Design and Features
+**Backend (`marvel-service`):**
+- **data-scraper module:** Fetches Marvel movie/actor/character data from TMDB, handles rate limiting and retries, and loads data into the database.
+- **movie-explorer module:** Exposes REST API endpoints for querying movies, actors, and characters. Implements pagination and efficient DB queries.
+- **Database:** PostgreSQL with a normalized schema (movies, actors, characters, associations), designed for scalability and extensibility.
 
-A nestJS backend and react frontend. The backend populates tmdb data via dedicated API call.
+**Frontend (`marvel-webapp`):**
+- **Pages:** Three main pages, each corresponding to a core API endpoint.
+- **API Integration:** Uses a central API utility to fetch data from the backend.
+- **UI:** Built with Material-UI, with a focus on clarity and extensibility.
 
-## marvel-service
-A nestJS backend. Two main components:
+---
 
-### movie-explorer
-   1. Postgres database integrated (postgres for familiarity and entity relationship management)
-   2. Pagination included in all three endpoints
-   5. e2e test that runs postgres via docker, populates the db via actual tmdb access and asserts success scenario on all APIs
-   6. db schema with UUID, defined for fast reading and ready for fetching actual entities if required
-   7. docker definitions for db and app for testing/dev
-   8. .env file support
-   9. health endpoint for production deployments
-   10. basic nestJS logging
-   11. Future enhancements to support larger data+user scale:
-       1. DB indexes could probably be improved/added
-       2. Multiple instances deployable supported out-of-the-box
-       3. Instead of joins, data can be precalculated in views or new tables
-       4. A caching layer (although it should probably be last resort)
+## How This Solution Meets the Assignment
 
-### data-scraper
-   1. Scrapes tmdb in an offline manner, currently invoked by API for development/testing convenience at `/data-scraper/scrape-movies`
-   2. Data to populate is defined in `movies-and-actors.json`
-   3. Rate limiting done via [Bottleneck](https://www.npmjs.com/package/bottleneck), exponential retires by [p-retry](https://www.npmjs.com/package/p-retry)
-   4. Errors logged and returned in response (best effort approach)
-   5. Future enhancements to support larger data scale:
-      1. Maintain a table log for with state of each movie to be processed (pending/failed/in-progress/fetch-completed/load-completed). This will be the trigger to which data should be loaded, instead of the json file.
-      2. Store the raw data fetched
-      3. We shall separate the fetching of data from its loading into the databases, this way we can do both concurrently. One components fetches from tmdb, the other in parallel scans the unhandled raw data and loads in db.
-      4. It's possible that the data loader will be in the service itself, to consolidate db access. We can go further with an even driven arch if needed.
-      5. To support multiple providers, we shall add an "externalId" and "externalProvider" to each entity record, maintaining the link to the external platform. Also, perhaps add link to the entry in the log table above.
+**Backend:**
+- **Tech:** Node.js (NestJS), PostgreSQL, TypeORM
+- **Data Acquisition:** Fetches Marvel movie/actor/character data from TMDB API (with rate limiting, retries, and error handling)
+- **Database:** Efficient schema with UUIDs, ready for scale and extensibility
+- **Endpoints:**
+  - `/moviesPerActor` – List of movies per actor
+  - `/actorsWithMultipleCharacters` – Actors who played multiple Marvel characters
+  - `/charactersWithMultipleActors` – Characters played by multiple actors
+- **Extensibility:** Designed for larger datasets and future features
 
-Technologies: nestJS, Postgres, typescript, typeorm (for db access), bottleneck (rate limit) and p-retry (api retries), docker
+**Frontend:**
+- **Tech:** React, TypeScript, Material-UI
+- **Pages:**
+  - Movies per Actor (select actor, see movies)
+  - Actors with Multiple Characters (see actors, movies, and characters)
+  - Characters with Multiple Actors (see characters, movies, and actors)
+- **Design:** Simple, extensible, with empty states and Material-UI styling
 
+---
 
-## marvel-webapp
+## Technology Stack
+- **Backend:** Node.js, NestJS, TypeScript, PostgreSQL, TypeORM, Docker
+- **Frontend:** React, TypeScript, Material-UI, Docker
+- **Other:** Bottleneck (rate limiting), p-retry (API retries)
 
-A simple react web app.
+---
 
-   1. Presents the 3 desired pages via API call to marvel-service
-   2. Easily extensible by adding more pages
-   3. docker definitions for testing/dev
-   4. .env file support
-   5. material-ui as default design system
-   6. default empty states
+## Setup Instructions
 
-Technologies: react, typescript, material-ui, docker
+### Prerequisites
+- Docker installed
+- (Optional) Node.js & npm for local development
 
+### 1. Clone the Repository
+```sh
+git clone <repo-url>
+cd vi-home-assignment
+```
 
-# Testing and Development
+### 2. Configure Environment Variables
+- Add your TMDB API key to `backend/marvel-service/.env.test`:
+  ```
+  TMDB_API_KEY=<your_tmdb_api_key>
+  ```
+  (A sample key is provided in the assignment for testing.)
 
-A single e2e test exists on the backend. This test lifts postgres as a docker dependency, runs the scraper against an actual tmdb endpoint, and asserts success scenarios on all three endpoints.
-No test coverage on frontend :(
+### 3. Start the Application
+From the project root, run:
+```sh
+./scripts/start_local.sh
+```
+This will start both backend and frontend (dockerized).
 
-To further develop each project, refer to available commands in respective package.json.
-Each project includes a .env.test file for example configuration.
+### 4. Populate the Database
+After services are up, run:
+```sh
+curl -X POST http://localhost:3000/data-scraper/scrape-movies
+```
+This fetches and loads Marvel data from TMDB.
+
+### 5. Access the UI
+Open your browser at [http://localhost:3001](http://localhost:3001)
+
+---
+
+## How to Use
+- **Movies Per Actor:**
+  - Select an actor from the list to see all Marvel movies they appeared in.
+- **Actors with Multiple Characters:**
+  - View actors who played more than one Marvel character, with details per movie/character.
+- **Characters with Multiple Actors:**
+  - View Marvel characters portrayed by multiple actors, with details per movie/actor.
+
+---
+
+## Project Structure
+```
+vi-home-assignment/
+  backend/marvel-service/   # NestJS backend
+    src/
+      data-scraper/         # TMDB data fetching
+      movie-explorer/       # API endpoints & DB logic
+  frontend/marvel-webapp/   # React frontend
+    src/pages/              # Main UI pages
+  scripts/start_local.sh    # Startup script
+```
+
+---
+
+## Assumptions & Design Decisions
+- **Data Scope:** MVP uses a small, static list of Marvel movies/actors (see `movies-and-actors.json`), but schema and logic are ready for larger datasets.
+- **API Design:** Endpoints are simple and focused for MVP; future versions could use more RESTful/HATEOAS patterns.
+- **Performance:** Pagination on all endpoints; backend and DB ready for scale; rate limiting and retries for TMDB API.
+- **Extensibility:** DB schema supports adding more entities (e.g., directors), multiple data providers, and future features.
+- **UI:** Minimal, but easily extensible; Material-UI for consistency.
+- **Testing:** One e2e backend test (runs scraper, checks endpoints); no frontend tests due to time constraints.
+
+---
+
+## Future Improvements
+- Add search, sorting, and filtering in the UI
+- More RESTful API design
+- More comprehensive test coverage (frontend & backend)
+- Support for additional data providers
+- Caching layer for heavy read scenarios
+- User authentication and personalization
+
+---
+
+## Credits
+- Assignment by Vi
+- Data from [TMDB API](https://www.themoviedb.org/documentation/api)
+- Developed by Guy Manzurola
 
 
 
