@@ -30,3 +30,7 @@ jobs:
 
       - name: Run e2e tests
         run: npm run test:e2e
+
+      - name: Show Postgres logs
+        run: docker compose logs postgres-test
+        working-directory: backend/marvel-service
