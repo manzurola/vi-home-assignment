@@ -1,54 +1,24 @@
 #!/bin/bash
 set -e
 
-# Start the backend service (marvel-service)
-echo "Starting backend (marvel-service) on port 3000..."
-(
-  set -e
-  cd ../backend/marvel-service || exit 1
-  export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  if [ -f .env.test ] && [ ! -f .env ]; then
-    echo "Copying .env.test to .env (please ensure TMDB token is set in .env)"
-    cp .env.test .env
-  fi
-  nvm use
-  npm install
-  npm run db:clean
-  npm run start &
-)
+# Clean up any running containers and networks from previous runs
 
-# Start the frontend service (marvel-webapp)
-echo "Starting frontend (marvel-webapp) on port 3001..."
-(
-  set -e
-  cd ../frontend/marvel-webapp || exit 1
-  export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  if [ -f .env.test ] && [ ! -f .env ]; then
-      echo "Copying .env.test to .env"
-      cp .env.test .env
-    fi
-  nvm use
-  npm run install:legacy
-  npm run start &
-)
+echo "Stopping and removing existing containers..."
+docker-compose -f backend/marvel-service/docker-compose.yml down --remove-orphans -v
 
-echo "Waiting for backend to be available on http://localhost:3000..."
-# Wait for backend to be up (max 30s)
-for i in {1..30}; do
-  if curl -s http://localhost:3000 > /dev/null; then
-    echo "Backend is up!"
-    break
-  fi
-  sleep 1
-done
+echo "Stopping and removing frontend containers..."
+docker-compose -f frontend/marvel-webapp/docker-compose.yml down --remove-orphans -v
 
-if ! curl -s http://localhost:3000 > /dev/null; then
-  echo "Backend did not start within 30 seconds. Exiting."
-  exit 1
-fi
+# Start backend (and db) in detached mode
+docker-compose -f backend/marvel-service/docker-compose.yml up -d
 
+# Start frontend in detached mode
+docker-compose -f frontend/marvel-webapp/docker-compose.yml up -d
+
+# Populate the database
 echo "Populating the database via POST to /data-scraper/scrape-movies..."
-RESPONSE=$(curl -s -X POST http://localhost:3000/data-scraper/scrape-movies -H "Content-Type: application/json")
-echo "Response: $RESPONSE"
+curl -X POST http://localhost:3000/data-scraper/scrape-movies
 
-echo "Both services are starting. Backend: http://localhost:3000, Frontend: http://localhost:3001"
+echo "All services are running!"
+echo "Backend: http://localhost:3000"
+echo "Frontend: http://localhost:3001"

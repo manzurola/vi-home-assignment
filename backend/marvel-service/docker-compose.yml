@@ -37,6 +37,22 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build: .
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres-dev
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+    ports:
+      - 3000:3000
+    command: sh -c "npm run migration:run && npm run start:prod"
+
 volumes:
   postgres_dev_data:
   postgres_test_data:

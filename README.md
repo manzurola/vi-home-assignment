@@ -52,6 +52,7 @@ No test coverage on frontend :(
 
 1. No real time data requirement. Assumed data is fetched and processed offline (periodically, by invocation etc).
 2. Preparing for large scale (in the scope of this project), for both users and data
+3. The initial data to fetch includes movies and actors. It seems that actors are defined perhaps to only allow them in the search. I removed this limitation and only scraping movies with all their associated actors.
 
 ## Possible Future features
 Some possible future features are:
