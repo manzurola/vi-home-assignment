@@ -9,6 +9,12 @@ docker-compose -f backend/marvel-service/docker-compose.yml down --remove-orphan
 echo "Stopping and removing frontend containers..."
 docker-compose -f frontend/marvel-webapp/docker-compose.yml down --remove-orphans -v
 
+# Copy .env.test to .env if needed (backend)
+if [ -f backend/marvel-service/.env.test ]; then
+  cp backend/marvel-service/.env.test backend/marvel-service/.env
+  echo "Copied backend .env.test to .env"
+fi
+
 # Start backend (and db) in detached mode
 docker-compose -f backend/marvel-service/docker-compose.yml up -d
 
