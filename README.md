@@ -2,22 +2,65 @@
 
 A full-stack application to explore Marvel movies, actors, and characters.
 
+This project is split into two components
 
-## About the Product:
+1. marvel-service - a nestJS backend
+2. marvel-webapp - a react web app
 
-### Current Assumptions
+# Running the services
+
+1. Clone the repo
+2. Make sure you have docker and npm installed
+
+## Running `marvel-service`
+
+1. cd into the appropriate component folder
+2. `cp .env.test .env` and fill the missing tmdb token  
+3. `nvm use`
+4. `npm i`
+5. `npm run db:clean` - will set up local db via docker compose + migrations
+6. `npm run start`
+7. now running at port 3000
+8. issue a POST request to `localhost:3000/data-scraper/scrape-movies` - will populate the database from tmdb 
+
+## Running `marvel-webapp`
+
+1. cd into the appropriate component folder
+2. `nvm use`
+3. `npm run install:legacy` - to support react with newer ts
+3. `npm run start`
+4. now running at port 3001
+
+
+# Testing and Development
+
+A single e2e test exists on the backend. This test lifts postgres as a docker dependency, runs the scraper against an actual tmdb endpoint, and asserts success scenarios on all three endpoints.
+No test coverage on frontend :(
+
+1. A CI/CD pipeline is in place, running the test on PRs to main.
+2. docker-compose.yml configured with test and dev databases (commands avilable in package.json)
+3. `.env` file integration in place and a sample `.env.test` is available
+
+
+## Running the marvel-service tests
+
+1. After installing dependencies, run `npm run test:e2e`
+
+# About the Product:
+
+## Current Assumptions
 
 1. No real time data requirement. Assumed data is fetched and processed offline (periodically, by invocation etc).
 2. Preparing for large scale (in the scope of this project), for both users and data
 
-### Possible Future features
+## Possible Future features
 Some possible future features are:
 1. Different sorting and searching (as you mentioned as well)
 2. Viewing an actor/character/cast/movie in a separate page (full view)
 3. Additional entities, perhaps sound engineers, directors etc
 4. Additional data providers aside from tmdb
 
-## Project Architecture:
+# Project Architecture:
 
 The project is split into two separate components - backend and frontend.
 
