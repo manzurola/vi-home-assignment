@@ -16,4 +16,4 @@ export interface ScrapingError {
 export interface MoviesData {
   movies: Record<string, number>;
   actors: string[];
-} 
+}
