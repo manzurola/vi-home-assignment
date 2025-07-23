@@ -21,6 +21,10 @@ describe('MovieExplorerController (e2e)', () => {
       .expect(200);
   }, 60000);
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it('/moviesPerActor (GET)', async () => {
     const res = await request(app.getHttpServer())
       .get('/moviesPerActor')
