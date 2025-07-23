@@ -1,44 +1,98 @@
 # Marvel Data Explorer
 
-A full-stack application to explore Marvel movies, actors, and characters using TMDB API.
+A full-stack application to explore Marvel movies, actors, and characters.
+
+# Running the Fullstack Project
+
+Prerequisite: Make sure you have docker installed
+
+1. Clone the repo
+2. To run both frontend and backend applications for local poc:
+    1. Add the TMDB_API_KEY value to `backend/marvel-service/.env.test`
+    2. From the root folder run - `./scripts/start_local` - starts dockerized services
+    3. Once completed, run the following to populate the database from tmdb
+       `curl -X POST http://localhost:3000/data-scraper/scrape-movies`
+    4. Then access the UI at will :)
+
+# Product Requirements:
+
+## Current Assumptions
+
+1. No real time data requirement. Assumed data is fetched and processed offline (periodically, by invocation etc).
+2. Preparing for large scale (in the scope of this project), for both users and data
+3. The initial data to fetch includes movies and actors. It seems that actors are defined perhaps to only allow them in the search. I removed this limitation and only scraping movies with all their associated actors.
+4. Pagination added to all APIs
+5. A larger dataset is supported but under the current json configuration. This should be changed once set is large enough.
+6. I didn't add any user facing features (pagination only), both due to lack of time and I chose to go with the "wait until someone asks" approach for this one. My extra time focus went to make sure this is maintainable and easily extensible by other devs.
+7. The current API definitions are not very extensible. For example, entity keys are by name, not ID. I added an ID to associations for future features. Also the path naming - a verb+object, is not very REST friendly. Will probably change later to a more HATEOS approach, i.e. `/movies/<move-id>/actors` etc. I left it as is for now.
+
+## Possible Future features
+Some possible future features are:
+1. Different sorting and searching (as you mentioned as well)
+2. Viewing an actor/character/cast/movie in a separate page (full view, db is ready for that)
+3. Additional entities, perhaps sound engineers, directors etc (db ready)
+4. Additional data providers aside from tmdb (not ready but design suggested below)
+5. Large dataset (unsupported by design suggests below)
+6. Large user base (heavy reads - numbers are pending but should cater to quite a heavy load)
+
+# High Level Design and Features
+
+A nestJS backend and react frontend. The backend populates tmdb data via dedicated API call.
+
+## marvel-service
+A nestJS backend. Two main components:
+
+### movie-explorer
+   1. Postgres database integrated (postgres for familiarity and entity relationship management)
+   2. Pagination included in all three endpoints
+   5. e2e test that runs postgres via docker, populates the db via actual tmdb access and asserts success scenario on all APIs
+   6. db schema with UUID, defined for fast reading and ready for fetching actual entities if required
+   7. docker definitions for db and app for testing/dev
+   8. .env file support
+   9. health endpoint for production deployments
+   10. basic nestJS logging
+   11. Future enhancements to support larger data+user scale:
+       1. DB indexes could probably be improved/added
+       2. Multiple instances deployable supported out-of-the-box
+       3. Instead of joins, data can be precalculated in views or new tables
+       4. A caching layer (although it should probably be last resort)
+
+### data-scraper
+   1. Scrapes tmdb in an offline manner, currently invoked by API for development/testing convenience at `/data-scraper/scrape-movies`
+   2. Data to populate is defined in `movies-and-actors.json`
+   3. Rate limiting done via [Bottleneck](https://www.npmjs.com/package/bottleneck), exponential retires by [p-retry](https://www.npmjs.com/package/p-retry)
+   4. Errors logged and returned in response (best effort approach)
+   5. Future enhancements to support larger data scale:
+      1. Maintain a table log for with state of each movie to be processed (pending/failed/in-progress/fetch-completed/load-completed). This will be the trigger to which data should be loaded, instead of the json file.
+      2. Store the raw data fetched
+      3. We shall separate the fetching of data from its loading into the databases, this way we can do both concurrently. One components fetches from tmdb, the other in parallel scans the unhandled raw data and loads in db.
+      4. It's possible that the data loader will be in the service itself, to consolidate db access. We can go further with an even driven arch if needed.
+      5. To support multiple providers, we shall add an "externalId" and "externalProvider" to each entity record, maintaining the link to the external platform. Also, perhaps add link to the entry in the log table above.
+
+Technologies: nestJS, Postgres, typescript, typeorm (for db access), bottleneck (rate limit) and p-retry (api retries), docker
 
 
-## Product Assumptions:
+## marvel-webapp
 
-1. No definition on what data should be displayed exactly. For example, when fetching actors with multiple characters, should we display which characters were played?
-2. It's possible that more providers other than tmdb will appear. Not currently supported, as a challenge appears which is to normalize entity IDs across different providers.
-3. Assuming no real time data requirements, so scraping is done by a separate component. Assuming scraping of data could be frequent and intensive. Since tmdb is rate limited and could be slow or non existent, we don't want to fail requests on that.
-4. Preparing for features to view actor/character/movie in more details (db schema supports this)
-5. Added pagination by default to support larger scale.
+A simple react web app.
 
-## Project Architecture:
+   1. Presents the 3 desired pages via API call to marvel-service
+   2. Easily extensible by adding more pages
+   3. docker definitions for testing/dev
+   4. .env file support
+   5. material-ui as default design system
+   6. default empty states
 
-The project is split into two separate components - backend and frontend.
+Technologies: react, typescript, material-ui, docker
 
-### BACKEND - /backend/marvel-service
-A nestJS server application responsible for data queries and scraping. The scraping module is currently part of this service.
-Composed of two main features:
 
-DATA SCRAPER
+# Testing and Development
 
-This module is responsible for scraping data offline from the tmdb endpoints.
+A single e2e test exists on the backend. This test lifts postgres as a docker dependency, runs the scraper against an actual tmdb endpoint, and asserts success scenarios on all three endpoints.
+No test coverage on frontend :(
 
-If scale increases significantly in the data loaded (not queries), this module can be separated to a dedicated service.
-In such a scenario, a few optimizations can be implemented:
-1. Maintain a table log for with state of each movie to be processed (pending/failed/in-progress/fetch-completed/load-completed). This will be the trigger to which data should be loaded, instead of the json file.
-2. We shall separate the fetching of data from its loading into the databases, this way we can do both concurrently. One components fetches from tmdb, the other in parallel scans the unhandled raw data and loads in db.
-3. It's possible that the data loader will be in the service itself, to consolidate db access. We can go further with an even driven arch if needed.
+To further develop each project, refer to available commands in respective package.json.
+Each project includes a .env.test file for example configuration.
 
-MOVIE EXPLORER
 
-This module handles various queries on the movie data we hold. Currently satisfies the three endpoints required.
-The endpoints have been changed a bit to support fetching of complete entities via references. The required APIs used names as foreign keys, which is not robust and error prone.
-Name normalization is not included but should be - a possible product decision on how to do that exactly.
 
-* If additional features/modules are required, they should be added parallel to the above.
-
-### FRONTEND - /frontend/marvel-webapp
-
-This is a react+ts project. UI design with material-ui.
-
-A simple webapp that displays data from the backend.

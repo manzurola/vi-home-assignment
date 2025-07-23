@@ -12,14 +12,14 @@ import {
   MoviesPerActorResponse,
 } from './movie-explorer.controller.types';
 
-@Controller()
+@Controller('api/v1/movie-explorer')
 export class MovieExplorerController {
   constructor(private readonly appService: MovieExplorerService) {}
 
   /**
    * Returns a mapping of actor name to an array of movies (with IDs and titles) they appeared in.
    */
-  @Get('/moviesPerActor')
+  @Get('moviesPerActor')
   getMoviesPerActor(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,
@@ -30,7 +30,7 @@ export class MovieExplorerController {
   /**
    * Returns a mapping of actor name to an array of roles (with movie and character IDs and names) for actors with multiple characters.
    */
-  @Get('/actorsWithMultipleCharacters')
+  @Get('actorsWithMultipleCharacters')
   getActorsWithMultipleCharacters(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,
@@ -41,7 +41,7 @@ export class MovieExplorerController {
   /**
    * Returns a mapping of character name to an array of roles (with movie and actor IDs and names) for characters with multiple actors.
    */
-  @Get('/charactersWithMultipleActors')
+  @Get('charactersWithMultipleActors')
   getCharactersWithMultipleActors(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(50), ParseIntPipe) pageSize: number,

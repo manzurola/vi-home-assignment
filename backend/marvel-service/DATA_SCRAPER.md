@@ -84,5 +84,4 @@ http POST localhost:3000/data-scraper/scrape-movies
 
 - The scraping process can take several minutes depending on the number of movies
 - Each movie requires 2 API calls to TMDB (details + credits)
-- Rate limiting is handled by the tmdb-ts library
 - Failed movies are logged and included in the response errors array 
