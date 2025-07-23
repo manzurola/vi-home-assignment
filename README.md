@@ -12,6 +12,7 @@ A full-stack application to explore Marvel movies, actors, and characters.
 4. Pagination added to all APIs
 5. A larger dataset is supported but under the current json configuration. This should be changed once set is large enough.
 6. I didn't add any user facing features (pagination only), both due to lack of time and I chose to go with the "wait until someone asks" approach for this one
+7. The current API definitions are not very extensible. For example, entity keys are by name, not ID. I added an ID to associations for future features. Also the path naming - a verb+object, is not very REST friendly. Will probably change later to a more HATEOS approach, i.e. `/movies/<move-id>/actors` etc. I left it as is for now.
 
 ## Possible Future features
 Some possible future features are:
