@@ -25,6 +25,9 @@ This project is split into two components
 # Running the services
 
 1. Clone the repo
+2. To run both services and their dependencies in parallel locally:
+   1. from the root folder - `./scripts/start_local`
+   2. This will invoke the compose file of each service
 2. Make sure you have docker, npm and nvm installed
 
 ## Running `marvel-service`

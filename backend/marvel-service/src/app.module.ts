@@ -4,6 +4,7 @@ import { DataScraperModule } from './data-scraper/data-scraper.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     DataScraperModule,
     MovieExplorerModule,
     DataScraperModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
