@@ -28,5 +28,11 @@ jobs:
       - name: Inject TMDB_API_KEY into .env.test
         run: echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" >> .env.test
 
+      - name: Override DB_HOST and DB_PORT for CI
+        run: |
+          echo "DB_HOST=postgres-test" >> .env.test
+          echo "DB_PORT=5432" >> .env.test
+        working-directory: backend/marvel-service
+
       - name: Run e2e tests
         run: npm run test:e2e
