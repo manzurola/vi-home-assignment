@@ -17,14 +17,14 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "pretest:e2e": "docker compose up -d postgres-test && npm run migration:run",
+    "pretest:e2e": "docker compose up -d postgres-dev && npm run migration:run",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "posttest:e2e": "docker compose down postgres-test && docker volume rm -f marvel-service_postgres_test_data",
+    "posttest:e2e": "docker compose down postgres-dev && docker volume rm -f marvel-service_postgres_dev_data",
     "migration:generate": "dotenv -e .env -- typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "migration:run": "dotenv -e .env -- typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "dotenv -e .env -- typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts",
     "docker:up": "docker compose up -d",
-    "db:clean": "docker compose down postgres-test && docker volume rm -f marvel-service_postgres_test_data && docker compose up -d postgres-test && npm run migration:run"
+    "db:clean": "docker compose down postgres-dev && docker volume rm -f marvel-service_postgres_tdev_data && docker compose up -d postgres-dev && npm run migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

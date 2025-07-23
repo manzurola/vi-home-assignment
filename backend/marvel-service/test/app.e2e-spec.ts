@@ -25,9 +25,9 @@ describe('MovieExplorerController (e2e)', () => {
     await app.close();
   });
 
-  it('/moviesPerActor (GET)', async () => {
+  it('/api/v1/moviesPerActor (GET)', async () => {
     const res = await request(app.getHttpServer())
-      .get('/moviesPerActor')
+      .get('/api/v1/movie-explorer/moviesPerActor')
       .expect(200);
     expect(res.body).toHaveProperty('items');
     expect(res.body).toHaveProperty('page');
@@ -41,9 +41,9 @@ describe('MovieExplorerController (e2e)', () => {
     expect(firstMovies.length).toBeGreaterThan(0);
   });
 
-  it('/actorsWithMultipleCharacters (GET)', async () => {
+  it('/api/v1/actorsWithMultipleCharacters (GET)', async () => {
     const res = await request(app.getHttpServer())
-      .get('/actorsWithMultipleCharacters')
+      .get('/api/v1/movie-explorer/actorsWithMultipleCharacters')
       .expect(200);
     expect(res.body).toHaveProperty('items');
     expect(res.body).toHaveProperty('page');
@@ -57,9 +57,9 @@ describe('MovieExplorerController (e2e)', () => {
     expect(firstRoles.length).toBeGreaterThan(0);
   });
 
-  it('/charactersWithMultipleActors (GET)', async () => {
+  it('/api/v1/charactersWithMultipleActors (GET)', async () => {
     const res = await request(app.getHttpServer())
-      .get('/charactersWithMultipleActors')
+      .get('/api/v1/movie-explorer/charactersWithMultipleActors')
       .expect(200);
     expect(res.body).toHaveProperty('items');
     expect(res.body).toHaveProperty('page');
